@@ -1,0 +1,31 @@
+/1/
+SELECT * FROM employees;
+
+/2/
+SELECT COUNT(*) AS total_managers FROM employees WHERE job_title = 'manager';
+
+/3/
+SELECT name, salary FROM employees WHERE department IN ('Sales', 'Marketing);
+
+/4/
+SELECT AVG(salary) AS average_salary FROM employees WHERE joined_date >= CURDATE() - INTERVAL 5 YEAR;
+
+/5/
+SELECT e.employee_id, e.name, SUM(sd.sales) AS total_sales
+FROM employees e
+JOIN sales_data sd ON e.employee_id = sd.employee_id
+GROUP BY e.employee_id, e.name
+ORDER BY total_sales DESC
+LIMIT 5;
+
+/6/
+SELECT e.name, e.salary, AVG(e.salary) OVER (PARTITION BY e.department) AS avg_department_salary
+FROM employees e
+WHERE e.salary > (SELECT AVG(salary) FROM employees);
+
+/7/
+SELECT name, SUM(sales) AS total_sales, RANK() OVER (ORDER BY SUM(sales) DESC) AS sales_rank
+FROM employees e
+JOIN sales_data sd ON e.employee_id = sd.employee_id
+GROUP BY e.employee_id, name
+ORDER BY sales_rank;
